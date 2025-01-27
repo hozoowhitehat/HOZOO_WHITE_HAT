@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat Room</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="login-screen" class="hidden">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <button id="login-btn">Login</button>
+  </div>
+
+  <div id="chat-room" class="hidden">
+    <header>
+      <h1>Chat Room</h1>
+      <button id="logout-btn">Logout</button>
+    </header>
+    <div id="chat-messages"></div>
+    <div id="chat-input">
+      <input type="text" id="message" placeholder="Type a message" />
+      <button id="send-btn">Send</button>
+      <button id="upload-photo-btn">📷</button>
+      <button id="upload-video-btn">📹</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
