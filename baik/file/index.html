@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spam Tool</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Spam Application</h1>
+        <form id="spam-form">
+            <label for="phone-number">Phone Number:</label>
+            <input type="text" id="phone-number" name="phoneNumber" required>
+            <label for="spam-type">Choose Spam Type:</label>
+            <select id="spam-type" name="choice">
+                <option value="1">KitaBisa</option>
+                <option value="2">Tokopedia</option>
+                <option value="3">PHD</option>
+                <option value="4">Balaji</option>
+                <option value="5">TokoTalk</option>
+            </select>
+            <button type="submit">Send Spam</button>
+        </form>
+        <p id="result"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
