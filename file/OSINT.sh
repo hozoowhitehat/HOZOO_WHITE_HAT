@@ -435,6 +435,72 @@ clear
 clear
 termux-setup-storage -y
 clear
+#!/bin/bash
+# Google Dorking Telegram Bot - Open Source Intelligence
+# Author: [Nama Anda]
+
+# Meminta Token API dari pengguna
+read -p "Masukkan Token Bot Telegram: " TOKEN
+URL="https://api.telegram.org/bot$TOKEN"
+
+# Fungsi untuk mengirim pesan ke pengguna
+send_message() {
+    local chat_id=$1
+    local message=$2
+    curl -s -X POST "$URL/sendMessage" -d "chat_id=$chat_id&text=$message"
+}
+
+# Fungsi Google Dorking
+google_dork() {
+    local chat_id=$1
+    local dork=$2
+    local search_url="https://www.google.com/search?q=${dork// /+}"
+    
+    send_message "$chat_id" "🔍 Google Dorking Query:\n${dork}\n\n🔗 URL: $search_url"
+}
+
+# Loop untuk membaca perintah dari Telegram
+last_update_id=0
+while true; do
+    updates=$(curl -s "$URL/getUpdates")
+    for row in $(echo "$updates" | jq -c '.result[]'); do
+        update_id=$(echo "$row" | jq '.update_id')
+
+        # Skip jika sudah diproses
+        if [[ "$update_id" -le "$last_update_id" ]]; then
+            continue
+        fi
+
+        last_update_id=$update_id
+        chat_id=$(echo "$row" | jq '.message.chat.id')
+        text=$(echo "$row" | jq -r '.message.text')
+
+        case "$text" in
+            /start)
+                send_message "$chat_id" "Selamat datang di Tools hozoo cantik gemoy 💃 Google Dorking Bot! Ketik /help untuk melihat daftar perintah."
+                ;;
+            /help)
+                send_message "$chat_id" "🔍 Perintah Google Dorking Bot:\n
+                /dork [query] - Melakukan pencarian Google Dorking\n
+                Contoh:\n
+                /dork site:example.com filetype:pdf"
+                ;;
+            /dork*)
+                query=$(echo "$text" | cut -d' ' -f2-)
+                if [[ -z "$query" ]]; then
+                    send_message "$chat_id" "❌ Mohon masukkan query Dorking. Contoh:\n/dork site:example.com filetype:pdf"
+                else
+                    google_dork "$chat_id" "$query"
+                fi
+                ;;
+            *)
+                send_message "$chat_id" "❌ Perintah tidak dikenal. Ketik /help untuk melihat daftar perintah."
+                ;;
+        esac
+    done
+    sleep 5  # Delay untuk menghindari spam request
+done
+
 fi
 if [ $updt = 7 ] || [ $updt = 07 ]
 then
