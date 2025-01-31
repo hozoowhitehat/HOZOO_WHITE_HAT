@@ -189,6 +189,73 @@ clear
 clear
 termux-setup-storage -y
 clear
+
+read -p "Masukkan token bot: " TOKEN
+URL="https://api.telegram.org/bot$TOKEN"
+UPDATE_ID=0
+
+
+get_updates() {
+    curl -s "$URL/getUpdates?offset=$UPDATE_ID" | jq -c '.result[]'
+}
+
+
+send_message() {
+    local chat_id=$1
+    local text=$2
+    curl -s -X POST "$URL/sendMessage" -d "chat_id=$chat_id&text=$text"
+}
+
+
+get_osint_data() {
+    local username=$1
+    local chat_id=$2
+    OUTPUT_DIR="output/$username"
+    mkdir -p "$OUTPUT_DIR"
+
+    send_message "$chat_id" "⏳ Mengambil data Instagram untuk: $username..."
+
+    
+    instaloader --sessionfile session.txt --metadata-json --dirname-pattern="$OUTPUT_DIR" "$username"
+
+    
+    instaloader --sessionfile session.txt --followers --dirname-pattern="$OUTPUT_DIR" "$username"
+    instaloader --sessionfile session.txt --followees --dirname-pattern="$OUTPUT_DIR" "$username"
+
+    
+    grep -oP "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" "$OUTPUT_DIR"/*.txt | sort | uniq > "$OUTPUT_DIR/emails.txt"
+
+    
+    send_message "$chat_id" "✅ OSINT Selesai!\n📂 Data disimpan di: $OUTPUT_DIR"
+
+    if [[ -s "$OUTPUT_DIR/emails.txt" ]]; then
+        send_message "$chat_id" "📧 Email ditemukan:\n$(cat "$OUTPUT_DIR/emails.txt")"
+    else
+        send_message "$chat_id" "❌ Tidak ada email ditemukan."
+    fi
+}
+
+
+while true; do
+    get_updates | while read -r update; do
+        ID=$(echo "$update" | jq -r '.update_id')
+        CHAT_ID=$(echo "$update" | jq -r '.message.chat.id')
+        TEXT=$(echo "$update" | jq -r '.message.text')
+
+        if [[ $ID -gt $UPDATE_ID ]]; then
+            UPDATE_ID=$((ID+1))
+
+            if [[ "$TEXT" == "/start" ]]; then
+                send_message "$CHAT_ID" "🤖 Selamat datang di TOOLS HOZOO CUTE GEMOY GLOWING AW 💃OSINT Instagram!\nKirim username Instagram untuk mendapatkan data."
+
+            else
+                get_osint_data "$TEXT" "$CHAT_ID"
+            fi
+        fi
+    done
+    sleep 2
+done
+
 fi
 if [ $updt = 5 ] || [ $updt = 05 ]
 then
