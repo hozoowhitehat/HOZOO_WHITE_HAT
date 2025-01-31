@@ -108,8 +108,47 @@ sleep 1
 read -p "╰─$" updt
 if [ $updt = 1 ] || [ $updt = 01 ]
 then
-pkg update
 clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+clear
+termux-setup-storage -y
+clear
+pkg update
+git clone https://github.com/hozoowhitehat/HOZOO_WHITE_HAT
+clear
+cd HOZOO_WHITE_HAT
+cd OSINT
+clear
+chmod +x TOOLS_OSINT.sh
+./TRACK_IP.sh
 fi
 if [ $updt = 2 ] || [ $updt = 02 ]
 then
@@ -121,6 +160,9 @@ clear
 cd HOZOO_WHITE_HAT
 cd OSINT
 clear
+clear
+termux-setup-storage -y
+clear
 chmod +x TOOLS_OSINT.sh
 ./TOOLS_OSINT.sh
 fi
@@ -129,36 +171,62 @@ if [ $updt = 3 ] || [ $updt = 03 ]
 then
 pkg update
 clear
+git clone https://github.com/hozoowhitehat/HOZOO_WHITE_HAT
+clear
+cd HOZOO_WHITE_HAT
+clear
+cd OSINT
+clear
+termux-setup-storage -y
+clear
+chmod +x 
 fi
 if [ $updt = 4 ] || [ $updt = 04 ]
 then
 pkg update
 clear
-
+clear
+termux-setup-storage -y
+clear
 fi
 if [ $updt = 5 ] || [ $updt = 05 ]
 then
 pkg update
+clear
+clear
+termux-setup-storage -y
 clear
 fi
 if [ $updt = 6 ] || [ $updt = 06 ]
 then
 pkg update
 clear
+clear
+termux-setup-storage -y
+clear
 fi
 if [ $updt = 7 ] || [ $updt = 07 ]
 then
-pkg update
+pkg update -y
+clear
+clear
+termux-setup-storage -y
 clear
 fi
 if [ $updt = 8 ] || [ $updt = 08 ]
 then
 pkg update
 clear
+clear
+termux-setup-storage -y
+clear
 fi
 if [ $updt = 9 ] || [ $updt = 09 ]
 then
 pkg update
+clear
+clear
+termux-setup-storage -y
 clear
 $e "$u====================================================="
 $e "$u= TERIMAKASIH PENGGUNAAN VIIP PREM HOZOO IMUT 🥰🙏   ="
