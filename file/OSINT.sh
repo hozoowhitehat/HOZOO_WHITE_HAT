@@ -179,7 +179,8 @@ cd OSINT
 clear
 termux-setup-storage -y
 clear
-chmod +x 
+chmod +x scan_user.sh
+./scan_user.sh
 fi
 if [ $updt = 4 ] || [ $updt = 04 ]
 then
