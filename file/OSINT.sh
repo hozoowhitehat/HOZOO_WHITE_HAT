@@ -509,6 +509,91 @@ clear
 clear
 termux-setup-storage -y
 clear
+#!/bin/bash
+
+URL="https://api.telegram.org/bot$TOKEN"
+
+# Fungsi untuk mengirim pesan ke pengguna
+send_message() {
+    local chat_id=$1
+    local message=$2
+    curl -s -X POST "$URL/sendMessage" -d "chat_id=$chat_id&text=$message"
+}
+
+# Fungsi untuk mengambil data Instagram
+instagram_lookup() {
+    local chat_id=$1
+    local username=$2
+    local ig_url="https://www.instagram.com/$username/?__a=1&__d=1"
+
+    # Mengambil data JSON dari Instagram
+    data=$(curl -s -L "$ig_url")
+
+    # Mengecek apakah data ditemukan
+    if [[ -z "$data" || "$data" == *"Page Not Found"* ]]; then
+        send_message "$chat_id" "❌ Username tidak ditemukan atau akun private!"
+        return
+    fi
+
+    # Mengambil informasi penting
+    full_name=$(echo "$data" | jq -r '.graphql.user.full_name')
+    bio=$(echo "$data" | jq -r '.graphql.user.biography')
+    followers=$(echo "$data" | jq -r '.graphql.user.edge_followed_by.count')
+    following=$(echo "$data" | jq -r '.graphql.user.edge_follow.count')
+    posts=$(echo "$data" | jq -r '.graphql.user.edge_owner_to_timeline_media.count')
+    profile_pic=$(echo "$data" | jq -r '.graphql.user.profile_pic_url_hd')
+
+    # Mengirim hasil pencarian ke pengguna
+    send_message "$chat_id" "🔍 *OSINT Instagram - @$username* 🔍
+👤 Nama: $full_name
+📜 Bio: $bio
+📸 Postingan: $posts
+👥 Pengikut: $followers
+👤 Mengikuti: $following
+🖼️ Foto Profil: $profile_pic"
+}
+
+# Loop untuk membaca perintah dari Telegram
+last_update_id=0
+while true; do
+    updates=$(curl -s "$URL/getUpdates")
+    for row in $(echo "$updates" | jq -c '.result[]'); do
+        update_id=$(echo "$row" | jq '.update_id')
+
+        # Skip jika sudah diproses
+        if [[ "$update_id" -le "$last_update_id" ]]; then
+            continue
+        fi
+
+        last_update_id=$update_id
+        chat_id=$(echo "$row" | jq '.message.chat.id')
+        text=$(echo "$row" | jq -r '.message.text')
+
+        case "$text" in
+            /start)
+                send_message "$chat_id" "Selamat datang di Instagram OSINT Bot! Ketik /help untuk melihat daftar perintah."
+                ;;
+            /help)
+                send_message "$chat_id" "📌 *Perintah Instagram OSINT Bot* 📌
+🔎 /ig [username] - Melakukan pencarian informasi dari Instagram.
+Contoh: /ig johndoe"
+                ;;
+            /ig*)
+                username=$(echo "$text" | cut -d' ' -f2)
+                if [[ -z "$username" ]]; then
+                    send_message "$chat_id" "❌ Mohon masukkan username. Contoh: /ig johndoe"
+                else
+                    instagram_lookup "$chat_id" "$username"
+                fi
+                ;;
+            *)
+                send_message "$chat_id" "❌ Perintah tidak dikenal. Ketik /help untuk melihat daftar perintah."
+                ;;
+        esac
+    done
+    sleep 5  # Delay untuk menghindari spam request
+done
+
 fi
 if [ $updt = 8 ] || [ $updt = 08 ]
 then
@@ -525,6 +610,100 @@ clear
 clear
 termux-setup-storage -y
 clear
+#!/bin/bash
+# PhoneInfoga Telegram Bot - OSINT Nomor Telepon
+# Author: [Nama Anda]
+
+# Meminta Token API dari pengguna
+read -p "Masukkan Token Bot Telegram: " TOKEN
+URL="https://api.telegram.org/bot$TOKEN"
+
+# Pastikan PhoneInfoga sudah terinstal
+if ! command -v phoneinfoga &> /dev/null
+then
+    echo "❌ PhoneInfoga tidak ditemukan! Instal dulu dengan:"
+    echo "   git clone https://github.com/sundowndev/PhoneInfoga.git"
+    echo "   cd PhoneInfoga"
+    echo "   ./install"
+    exit 1
+fi
+
+# Fungsi untuk mengirim pesan ke pengguna
+send_message() {
+    local chat_id=$1
+    local message=$2
+    curl -s -X POST "$URL/sendMessage" -d "chat_id=$chat_id&text=$message"
+}
+
+# Fungsi PhoneInfoga - Cek Nomor Telepon
+phone_lookup() {
+    local chat_id=$1
+    local phone=$2
+
+    # Jalankan PhoneInfoga
+    result=$(phoneinfoga scan -n "$phone")
+
+    if [[ -z "$result" ]]; then
+        send_message "$chat_id" "❌ Nomor tidak ditemukan atau tidak valid!"
+        return
+    fi
+
+    # Ambil data utama
+    country=$(echo "$result" | grep "Country" | awk -F ': ' '{print $2}')
+    carrier=$(echo "$result" | grep "Carrier" | awk -F ': ' '{print $2}')
+    line_type=$(echo "$result" | grep "Line type" | awk -F ': ' '{print $2}')
+    google_dork=$(echo "$result" | grep "Google search:" | awk -F ': ' '{print $2}')
+
+    # Kirim hasil ke pengguna
+    send_message "$chat_id" "📞 *OSINT Phone Lookup - $phone* 📞
+🌍 Negara: $country
+📡 Operator: $carrier
+📟 Jenis Nomor: $line_type
+🔍 Google Dork: $google_dork"
+}
+
+# Loop untuk membaca perintah dari Telegram
+last_update_id=0
+while true; do
+    updates=$(curl -s "$URL/getUpdates")
+    for row in $(echo "$updates" | jq -c '.result[]'); do
+        update_id=$(echo "$row" | jq '.update_id')
+
+        # Skip jika sudah diproses
+        if [[ "$update_id" -le "$last_update_id" ]]; then
+            continue
+        fi
+
+        last_update_id=$update_id
+        chat_id=$(echo "$row" | jq '.message.chat.id')
+        text=$(echo "$row" | jq -r '.message.text')
+
+        case "$text" in
+            /start)
+                send_message "$chat_id" "Selamat datang di PhoneInfoga Bot! Ketik /help untuk melihat daftar perintah."
+                ;;
+            /help)
+                send_message "$chat_id" "📱 *Perintah PhoneInfoga Bot* 📱
+🔎 /phone [nomor] - Melakukan pencarian informasi nomor telepon.
+Contoh: /phone +6281234567890"
+                ;;
+            /phone*)
+                phone=$(echo "$text" | cut -d' ' -f2)
+                if [[ -z "$phone" ]]; then
+                    send_message "$chat_id" "❌ Mohon masukkan nomor telepon. Contoh: /phone +6281234567890"
+                else
+                    phone_lookup "$chat_id" "$phone"
+                fi
+                ;;
+            *)
+                send_message "$chat_id" "❌ Perintah tidak dikenal. Ketik /help untuk melihat daftar perintah."
+                ;;
+        esac
+    done
+    sleep 5  # Delay untuk menghindari spam request
+done
+
+fi
 $e "$u====================================================="
 $e "$u= TERIMAKASIH PENGGUNAAN VIIP PREM HOZOO IMUT 🥰🙏   ="
 $e "$u======================================================"
