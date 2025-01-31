@@ -49,13 +49,67 @@ k="\033[1;33m"  # Kuning
 res="\033[0m"    # Reset
 
 $e "$u╔═════════════════════════════════════╗$res"
-$e "$u║ $k[01]$h . Track ip                        ║               
-$e "$u║ $k[02]$h . TOOLS OSINT                     ║
-$e "$u║ $k[03]$h . SCAN USERNAME                   ║
-$e "$u║ $k[04]$h . OSINT BOT TELEGRAM              ║
-$e "$u║ $k[05]$h . GENKOTACK OSINT TELEGRAM        ║
-$e "$u║ $k[06]$h . GOOGLE DROKING                  ║
-$e "$u║ $k[07]$h . OSINT INSTRAGRAM                ║
-$e "$u║ $k[07]$h . OSINT FACEBOOK                  ║
-$e "$u║ $k[07]$h . PHONEINFOGA MOD TELEGRAM        ║
+$e "$u║ $k[01]$h . Track ip                        ║"               
+$e "$u║ $k[02]$h . TOOLS OSINT                     ║"
+$e "$u║ $k[03]$h . SCAN USERNAME                   ║"
+$e "$u║ $k[04]$h . OSINT BOT TELEGRAM              ║"
+$e "$u║ $k[05]$h . GENKOTACK OSINT TELEGRAM        ║"
+$e "$u║ $k[06]$h . GOOGLE DROKING                  ║"
+$e "$u║ $k[07]$h . OSINT INSTRAGRAM                ║"
+$e "$u║ $k[08]$h . OSINT FACEBOOK                  ║"
+$e "$u║ $k[09]$h . PHONEINFOGA MOD TELEGRAM        ║"
+$e "$u║ $k[10]$h . EXIT                            ║"
 $e "$u╚═════════════════════════════════════╝$res"
+$e "$bg_m ╭─[ $bg_m HOZOO_WHITE_HAT_IMUT_GENOY@localhost ~/home $res"
+sleep 1
+read -p "╰─$" updt
+if [ $updt = 1 ] || [ $updt = 01 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 2 ] || [ $updt = 02 ]
+then
+pkg update
+clear
+fi
+
+if [ $updt = 3 ] || [ $updt = 03 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 4 ] || [ $updt = 04 ]
+then
+pkg update
+clear
+
+fi
+if [ $updt = 5 ] || [ $updt = 05 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 6 ] || [ $updt = 06 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 7 ] || [ $updt = 07 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 8 ] || [ $updt = 08 ]
+then
+pkg update
+clear
+fi
+if [ $updt = 9 ] || [ $updt = 09 ]
+then
+pkg update
+clear
+$e "$u====================================================="
+$e "$u= TERIMAKASIH PENGGUNAAN VIIP PREM HOZOO IMUT 🥰🙏   ="
+$e "$u======================================================"
+fi
