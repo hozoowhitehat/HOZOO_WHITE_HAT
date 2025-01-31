@@ -259,8 +259,6 @@ clear
 chmod +x OSINT.sh
 
 ./OSIMT
-clear
-clear
 fi
 if [ $updt = 12 ] || [ $updt = 12 ]
 then
