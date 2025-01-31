@@ -242,6 +242,24 @@ fi
 if [ $updt = 11 ] || [ $updt = 11 ]
 then
 pkg update
+cd
+
+clear
+
+git clone https://github.com/hozoowhitehat/HOZOO_WHITE_HAT
+
+clear
+
+cd HOZOO_WHITE_HAT clear
+
+cd file
+
+clear
+
+chmod +x OSINT.sh
+
+./OSIMT
+clear
 clear
 fi
 if [ $updt = 12 ] || [ $updt = 12 ]
