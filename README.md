@@ -11,6 +11,9 @@ git clone https://github.com/hozoowhitehat/HOZOO_WHITE_HAT
 clear
 
 cd HOZOO_WHITE_HAT
+clear
+
+cd file
 
 clear
 
