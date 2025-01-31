@@ -685,7 +685,7 @@ while true; do
             /help)
                 send_message "$chat_id" "📱 *Perintah PhoneInfoga Bot* 📱
 🔎 /phone [nomor] - Melakukan pencarian informasi nomor telepon.
-Contoh: /phone +6281234567890"
+Contoh: /phone +62"
                 ;;
             /phone*)
                 phone=$(echo "$text" | cut -d' ' -f2)
@@ -704,6 +704,8 @@ Contoh: /phone +6281234567890"
 done
 
 fi
+if [ $updt = 10 ] || [ $updt = 10 ]
+then
 $e "$u====================================================="
 $e "$u= TERIMAKASIH PENGGUNAAN VIIP PREM HOZOO IMUT 🥰🙏   ="
 $e "$u======================================================"
