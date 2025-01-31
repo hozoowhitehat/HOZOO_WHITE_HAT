@@ -114,7 +114,15 @@ fi
 if [ $updt = 2 ] || [ $updt = 02 ]
 then
 pkg update
+cd
 clear
+git clone https://github.com/hozoowhitehat/HOZOO_WHITE_HAT
+clear
+cd HOZOO_WHITE_HAT
+cd OSINT
+clear
+chmod +x TOOLS_OSINT.sh
+./TOOLS_OSINT.sh
 fi
 
 if [ $updt = 3 ] || [ $updt = 03 ]
