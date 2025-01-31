@@ -264,6 +264,169 @@ clear
 clear
 termux-setup-storage -y
 clear
+#!/bin/bash
+# OSINT Telegram Bot - Open Source Intelligence
+# Author: [Nama Anda]
+
+# Meminta Token API dari pengguna
+read -p "Masukkan Token Bot Telegram: " TOKEN
+URL="https://api.telegram.org/bot$TOKEN"
+
+# Mengecek apakah dependensi sudah terpasang
+for cmd in curl jq whois exiftool nmap; do
+    if ! command -v $cmd &> /dev/null; then
+        echo "Error: $cmd belum terinstall. Silakan install dengan 'sudo apt install $cmd'"
+        exit 1
+    fi
+done
+
+# Fungsi untuk mengambil update terbaru dari Telegram
+get_updates() {
+    curl -s "$URL/getUpdates"
+}
+
+# Fungsi untuk mengirim pesan ke pengguna
+send_message() {
+    local chat_id=$1
+    local message=$2
+    curl -s -X POST "$URL/sendMessage" -d "chat_id=$chat_id&text=$message"
+}
+
+# Fungsi Pencarian WHOIS
+whois_lookup() {
+    local chat_id=$1
+    local domain=$2
+    result=$(whois "$domain" | head -n 20)
+    send_message "$chat_id" "WHOIS Data:\n$result"
+}
+
+# Fungsi Pelacakan IP
+ip_lookup() {
+    local chat_id=$1
+    local ip=$2
+    result=$(curl -s "http://ipinfo.io/$ip/json" | jq .)
+    send_message "$chat_id" "IP Info:\n$result"
+}
+
+# Fungsi Analisis Email
+email_lookup() {
+    local chat_id=$1
+    local email=$2
+    result=$(curl -s "https://emailrep.io/$email" | jq .)
+    send_message "$chat_id" "Email Info:\n$result"
+}
+
+# Fungsi Cek Nomor Telepon (Memerlukan API Key)
+phone_lookup() {
+    local chat_id=$1
+    local phone=$2
+    read -p "Masukkan API Key untuk Phone Lookup: " API_KEY
+    result=$(curl -s "https://api.apilayer.com/number_verification/check?access_key=$API_KEY&number=$phone" | jq .)
+    send_message "$chat_id" "Phone Info:\n$result"
+}
+
+# Fungsi Analisis Metadata Gambar/Dokumen
+metadata_lookup() {
+    local chat_id=$1
+    local file_path=$2
+    result=$(exiftool "$file_path")
+    send_message "$chat_id" "Metadata Info:\n$result"
+}
+
+# Fungsi Pencarian Username di Media Sosial
+social_media_lookup() {
+    local chat_id=$1
+    local username=$2
+    result=$(curl -s "https://usersearch.org/api/?username=$username" | jq .)
+    send_message "$chat_id" "Social Media Info:\n$result"
+}
+
+# Fungsi Pencarian Subdomain
+domain_subdomains() {
+    local chat_id=$1
+    local domain=$2
+    result=$(sublist3r -d "$domain" | head -n 20)
+    send_message "$chat_id" "Subdomains:\n$result"
+}
+
+# Fungsi Pemindaian Jaringan
+network_scan() {
+    local chat_id=$1
+    local target=$2
+    result=$(nmap -A "$target" | head -n 20)
+    send_message "$chat_id" "Network Scan:\n$result"
+}
+
+# Loop untuk membaca perintah dari Telegram
+last_update_id=0
+while true; do
+    updates=$(get_updates)
+    for row in $(echo "$updates" | jq -c '.result[]'); do
+        update_id=$(echo "$row" | jq '.update_id')
+
+        # Skip jika sudah diproses
+        if [[ "$update_id" -le "$last_update_id" ]]; then
+            continue
+        fi
+
+        last_update_id=$update_id
+        chat_id=$(echo "$row" | jq '.message.chat.id')
+        text=$(echo "$row" | jq -r '.message.text')
+
+        case "$text" in
+            /start)
+                send_message "$chat_id" "Selamat datang di OSINT Bot! Ketik /help untuk melihat daftar perintah."
+                ;;
+            /help)
+                send_message "$chat_id" "Perintah yang tersedia:\n
+                /whois [domain] - Pencarian WHOIS
+                /ip [alamat IP] - Pelacakan IP
+                /email [email] - Analisis Email
+                /phone [nomor] - Cek Nomor Telepon
+                /metadata - Analisis Metadata Gambar/Dokumen
+                /social [username] - Pencarian Username di Media Sosial
+                /subdomain [domain] - Pencarian Subdomain
+                /network [IP/Domain] - Pemindaian Jaringan"
+                ;;
+            /whois*)
+                domain=$(echo "$text" | awk '{print $2}')
+                whois_lookup "$chat_id" "$domain"
+                ;;
+            /ip*)
+                ip=$(echo "$text" | awk '{print $2}')
+                ip_lookup "$chat_id" "$ip"
+                ;;
+            /email*)
+                email=$(echo "$text" | awk '{print $2}')
+                email_lookup "$chat_id" "$email"
+                ;;
+            /phone*)
+                phone=$(echo "$text" | awk '{print $2}')
+                phone_lookup "$chat_id" "$phone"
+                ;;
+            /metadata*)
+                send_message "$chat_id" "Kirim gambar atau dokumen untuk analisis metadata."
+                ;;
+            /social*)
+                username=$(echo "$text" | awk '{print $2}')
+                social_media_lookup "$chat_id" "$username"
+                ;;
+            /subdomain*)
+                domain=$(echo "$text" | awk '{print $2}')
+                domain_subdomains "$chat_id" "$domain"
+                ;;
+            /network*)
+                target=$(echo "$text" | awk '{print $2}')
+                network_scan "$chat_id" "$target"
+                ;;
+            *)
+                send_message "$chat_id" "Perintah tidak dikenal. Ketik /help untuk melihat daftar perintah."
+                ;;
+        esac
+    done
+    sleep 5  # Delay untuk menghindari spam request
+done
+
 fi
 if [ $updt = 6 ] || [ $updt = 06 ]
 then
